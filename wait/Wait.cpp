@@ -23,7 +23,7 @@ Wait::Result Wait::exec()
 {
     ProcessID pid;
 
-    if ((pid = atoi(arguments().get("PROCESS"))) <= 3) {
+    if ((pid = atoi(arguments().get("PROCESS"))) <= 0) {
 	    ERROR("wait: `" << arguments().get("PROCESS") << "is an invalid argument");
         return InvalidArgument;
     }
