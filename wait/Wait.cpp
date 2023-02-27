@@ -1,9 +1,11 @@
+#include <sys/wait.h>
+#include <sys/types.h>
+#include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
 #include <unistd.h>
-#include <sys/wait.h>
 #include "Wait.h"
 
 Wait::Wait(int argc, char **argv)
@@ -19,19 +21,16 @@ Wait::~Wait()
 
 Wait::Result Wait::exec()
 {
-    int sec = 0;
+    ProcessID pid;
 
-    // Convert input to seconds
-    if ((sec = wait(arguments().get("PROCESS"))) == -1)
-    {
-        ERROR("invalid process `" << arguments().get("PROCESS") << "'");
+    if ((pid = atoi(arguments().get("PROCESS"))) <= 3) {
+	    ERROR("wait: `" << arguments().get("PROCESS") << "is an invalid argument");
         return InvalidArgument;
     }
 
-    // Wait now
-    if (waitid(P_PID, (pid_t)sec, WEXITED) != 0)
-    {
-        ERROR("failed to wait: " << strerror(errno));
+
+    if (waitpid(pid, 0, 0) == (pid_t) -1) {
+    	ERROR("wait " << arguments().get("PROCESS") << " is an invalid input, miss girl.");
         return IOError;
     }
 
